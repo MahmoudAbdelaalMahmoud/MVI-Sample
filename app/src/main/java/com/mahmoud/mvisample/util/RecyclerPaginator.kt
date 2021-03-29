@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
  */
 class RecyclerPaginator(
     recycler: RecyclerView,
-    val isLoadmoreDisabled: () -> Boolean = { true },
+    var isLoadmoreDisabled: () -> Boolean = { true },
     val loadMore: (Int) -> Unit,
 ) : RecyclerView.OnScrollListener() {
     /**

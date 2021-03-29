@@ -5,21 +5,19 @@ import com.mahmoud.mvisample.boundaries.mapper.DtoToModelMapper
 import com.mahmoud.mvisample.data.remote.RecipeDto
 import com.mahmoud.mvisample.domain.Constants.FIRST_PAGE
 import com.mahmoud.mvisample.domain.mvi.RecipeListPartialState
+import io.reactivex.rxjava3.core.Single
 import javax.inject.Inject
 
 class Repository @Inject constructor(
     private val dataSource: IDataSource,
     private val mapper: DtoToModelMapper,
 ) : IRepository {
-    override suspend fun getRecipeList(page: Int): RecipeListPartialState {
-//       return try {
-           return  with(dataSource.getRecipeList(page)) {
-                if (page == FIRST_PAGE) firstPageResult()
-                else otherPageResult()
+    override fun getRecipeList(page: Int): Single<RecipeListPartialState> {
+        return dataSource.getRecipeList(page)
+            .map {
+                if (page == FIRST_PAGE) it.firstPageResult()
+                else it.otherPageResult()
             }
-//        }catch (e:Exception){
-//            getErrorAccordingPage(page == FIRST_PAGE,e)
-//        }
     }
 
 
@@ -30,9 +28,13 @@ class Repository @Inject constructor(
     }
 
     private fun List<RecipeDto>.otherPageResult(): RecipeListPartialState {
-        return if (isEmpty()) RecipeListPartialState.ListResult.ListResultLoadMore(this.map { mapper.fromDtoToModel(it) },
+        return if (isEmpty()) RecipeListPartialState.ListResult.ListResultLoadMore(this.map {
+            mapper.fromDtoToModel(it)
+        },
             isLast = true)
-        else RecipeListPartialState.ListResult.ListResultLoadMore(this.map { mapper.fromDtoToModel(it) },
+        else RecipeListPartialState.ListResult.ListResultLoadMore(this.map {
+            mapper.fromDtoToModel(it)
+        },
             isLast = false)
     }
 

@@ -1,16 +1,17 @@
 package com.mahmoud.mvisample.data.remote
 
+import io.reactivex.rxjava3.core.Single
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface IApiService {
     @GET("search")
-    suspend fun search(
+    fun search(
         @Query("page") page: Int,
         @Query("query") query: String? = "",
-    ): ResponseDto
+    ): Single<ResponseDto>
 
     @GET("get")
-    suspend fun get(@Query("id") id: Int): RecipeDto
+     fun get(@Query("id") id: Int): Single<RecipeDto>
 }
