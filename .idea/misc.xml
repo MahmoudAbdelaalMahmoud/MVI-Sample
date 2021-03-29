@@ -1,5 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="DesignSurface">
+    <option name="filePathToZoomLevelMap">
+      <map>
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/activity_main.xml" value="0.2694746376811594" />
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/fragment_recipe.xml" value="0.2694746376811594" />
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/fragment_recipe_list.xml" value="0.3582427536231884" />
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/recipe_item_layout.xml" value="0.25" />
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/view_load_more_error.xml" value="0.2694746376811594" />
+        <entry key="..\:/Users/Mahmoud/AndroidStudioProjects/MVISample/app/src/main/res/layout/view_loading_more.xml" value="0.2694746376811594" />
+      </map>
+    </option>
+  </component>
+  <component name="EntryPointsManager">
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="dagger.Binds" />
+      <item index="1" class="java.lang.String" itemvalue="dagger.hilt.android.HiltAndroidApp" />
+    </list>
+  </component>
   <component name="ExternalStorageConfigurationManager" enabled="true" />
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="11" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
