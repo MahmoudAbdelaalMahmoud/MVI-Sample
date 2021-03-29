@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/sampe_graph"
+    app:startDestination="@id/recipeListFragment">
+
+    <fragment
+        android:id="@+id/recipeListFragment"
+        tools:layout="@layout/fragment_recipe_list"
+        android:name="com.mahmoud.mvisample.presentation.ui.RecipeListFragment"
+        android:label="RecipeListFragment" />
+</navigation>

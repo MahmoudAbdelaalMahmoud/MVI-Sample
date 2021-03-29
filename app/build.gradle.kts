@@ -3,7 +3,6 @@ plugins {
     kotlinAndroid
     kapt
     hilt
-
 }
 
 android {
@@ -45,8 +44,11 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(AppDependencies.appLibraries)
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.4")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.4")
     kapt(arrayListOf<String>().apply {
-     add(AppDependencies.DI.hiltCompiler)
+        add(AppDependencies.DI.hiltCompiler)
+        add(AppDependencies.Glide.glideCompiler)
     })
     testImplementation(AppDependencies.testLibraries)
     androidTestImplementation(AppDependencies.androidTestLibraries)
