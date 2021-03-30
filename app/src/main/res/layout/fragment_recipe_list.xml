@@ -36,6 +36,7 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:viewState="@{viewModel.viewState}"
+                android:visibility="@{viewModel.viewState.loading == false || viewModel.viewState.error == null}"
                 app:adapter="@{adapter}"
                 tools:listitem="@layout/recipe_item_layout" />
 
