@@ -42,7 +42,7 @@ class RecipeViewModel @Inject constructor(
     private val refresh by lazy {
         ObservableTransformer<RecipeListActions.Refresh, RecipeListPartialState> { actions ->
             actions.flatMap {
-                getRecipeListUseCase(it.page)
+                getRecipeListUseCase(FIRST_PAGE)
             }
         }
     }
