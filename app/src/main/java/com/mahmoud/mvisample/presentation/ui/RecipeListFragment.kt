@@ -80,7 +80,7 @@ class RecipeListFragment : Fragment(), IActionHandler {
     }
 
     private fun intents() = Observable.merge(
-        Observable.just(RecipeListActions.Initial()),
+        Observable.just(RecipeListActions.Initial),
         binding.swipeRefreshLayout.rxRefreshes().map { RecipeListActions.Refresh() },
         loadMorePublisher.map { RecipeListActions.LoadMore(it) }
     )

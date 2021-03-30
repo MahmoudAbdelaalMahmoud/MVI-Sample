@@ -1,6 +1,7 @@
 package com.mahmoud.mvisample.presentation.vm
 
 import androidx.lifecycle.SavedStateHandle
+import com.mahmoud.mvisample.domain.Constants.FIRST_PAGE
 import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import com.mahmoud.mvisample.domain.mvi.RecipeListPartialState
 import com.mahmoud.mvisample.domain.mvi.ViewState
@@ -24,10 +25,24 @@ class RecipeViewModel @Inject constructor(
         return result.reduce(previousState, initialState)
     }
 
-    private val getRecipeList by lazy {
-        ObservableTransformer<RecipeListActions, RecipeListPartialState> { actions ->
+    private val initial by lazy {
+        ObservableTransformer<RecipeListActions.Initial, RecipeListPartialState> { actions ->
             actions.flatMap {
-                getRecipeListUseCase(page = it.page)
+                getRecipeListUseCase(FIRST_PAGE)
+            }
+        }
+    }
+    private val loadMore by lazy {
+        ObservableTransformer<RecipeListActions.LoadMore, RecipeListPartialState> { actions ->
+            actions.flatMap {
+                getRecipeListUseCase(it.page)
+            }
+        }
+    }
+    private val refresh by lazy {
+        ObservableTransformer<RecipeListActions.Refresh, RecipeListPartialState> { actions ->
+            actions.flatMap {
+                getRecipeListUseCase(it.page)
             }
         }
     }
@@ -35,8 +50,12 @@ class RecipeViewModel @Inject constructor(
 
     override fun handle(shared: Observable<RecipeListActions>): List<Observable<out RecipeListPartialState>> =
         listOf(
-            shared.ofType(RecipeListActions::class.java)
-                .compose(getRecipeList)
+            shared.ofType(RecipeListActions.Initial::class.java)
+                .compose(initial),
+            shared.ofType(RecipeListActions.LoadMore::class.java)
+                .compose(loadMore),
+            shared.ofType(RecipeListActions.Refresh::class.java)
+                .compose(refresh),
         )
 
 }
