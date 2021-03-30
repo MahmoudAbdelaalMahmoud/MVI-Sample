@@ -48,13 +48,13 @@ class RecipeViewModel @Inject constructor(
     }
 
 
-    override fun handle(shared: Observable<RecipeListActions>): List<Observable<out RecipeListPartialState>> =
+    override fun handle(acrion: Observable<RecipeListActions>): List<Observable<out RecipeListPartialState>> =
         listOf(
-            shared.ofType(RecipeListActions.Initial::class.java)
+            acrion.ofType(RecipeListActions.Initial::class.java)
                 .compose(initial),
-            shared.ofType(RecipeListActions.LoadMore::class.java)
+            acrion.ofType(RecipeListActions.LoadMore::class.java)
                 .compose(loadMore),
-            shared.ofType(RecipeListActions.Refresh::class.java)
+            acrion.ofType(RecipeListActions.Refresh::class.java)
                 .compose(refresh),
         )
 

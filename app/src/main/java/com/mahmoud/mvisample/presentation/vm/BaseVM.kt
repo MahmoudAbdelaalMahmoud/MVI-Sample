@@ -15,7 +15,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 
 abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> : ViewModel() {
 
-    val partialStatPublisher = PublishSubject.create<R>()
+    val partialStatPublisher: PublishSubject<R> = PublishSubject.create()
 
     private val intentsSubject: PublishSubject<A> = PublishSubject.create()
     private val statesObservable: Observable<S> by lazy { compose() }
@@ -23,7 +23,7 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
 
     abstract val initialState: S
     abstract fun reduce(result: R, previousState: S): S
-    abstract fun handle(shared: Observable<A>): List<Observable<out R>>
+    abstract fun handle(action: Observable<A>): List<Observable<out R>>
 
 
     fun processIntents(intents: Observable<A>) {
