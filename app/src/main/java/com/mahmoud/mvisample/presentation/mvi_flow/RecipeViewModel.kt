@@ -1,6 +1,7 @@
 package com.mahmoud.mvisample.presentation.mvi_flow
 
 import androidx.lifecycle.SavedStateHandle
+import com.mahmoud.mvisample.domain.Constants.FIRST_PAGE
 import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import com.mahmoud.mvisample.domain.mvi.RecipeListPartialState
 import com.mahmoud.mvisample.domain.mvi.ViewState
@@ -27,9 +28,9 @@ class RecipeViewModel @Inject constructor(
         with(flow) {
             return merge(
                 filterIsInstance<RecipeListActions.Initial>()
-                    .flatMapLatest { getRecipeListUseCase(it.page) },
+                    .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
                 filterIsInstance<RecipeListActions.Refresh>()
-                    .flatMapLatest { getRecipeListUseCase(it.page) },
+                    .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
                 filterIsInstance<RecipeListActions.LoadMore>()
                     .flatMapLatest { getRecipeListUseCase(it.page) }
             )

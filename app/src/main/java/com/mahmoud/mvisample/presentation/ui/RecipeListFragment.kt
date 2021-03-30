@@ -67,8 +67,8 @@ class RecipeListFragment : Fragment(), IActionHandler {
     }
 
     private fun intents() = merge(
-        flowOf(RecipeListActions.Initial()),
-        binding.swipeRefreshLayout.refreshes().map { RecipeListActions.Refresh() },
+        flowOf(RecipeListActions.Initial),
+        binding.swipeRefreshLayout.refreshes().map { RecipeListActions.Refresh },
         loadMoreChannel.consumeAsFlow().map { RecipeListActions.LoadMore(it) }
     )
 
