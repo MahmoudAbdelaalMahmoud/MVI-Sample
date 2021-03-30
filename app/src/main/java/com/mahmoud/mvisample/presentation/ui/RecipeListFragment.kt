@@ -27,6 +27,7 @@ class RecipeListFragment : Fragment(), IActionHandler {
     private lateinit var paginator: RecyclerPaginator
     lateinit var binding: RecipeListFragmentView
     private val recipeViewModel: RecipeViewModel by viewModels()
+
     private val loadMoreChannel = Channel<Int>(Channel.BUFFERED)
 
     override fun onCreateView(

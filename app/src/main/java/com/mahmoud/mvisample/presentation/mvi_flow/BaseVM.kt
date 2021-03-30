@@ -22,13 +22,18 @@ abstract class BaseVM<ACTION : MVIAction, VIEW_STATE : MVIViewState, PARTIAL_STA
 
     suspend fun processIntent(intent: ACTION) = _intentFlow.emit(intent)
 
-    protected fun initialProcess() {
+    init {
+        initialProcess()
+    }
+    private fun initialProcess() {
         val initialVS = initialViewState()
         viewState = _intentFlow
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
             .toPartialStatFlow()
             .sendPartialEvent()
+            .filter { it !is RecipeListPartialState.Error.ErrorLoadMore  }
             .scan(initialVS) { vs, partial -> partial.reduce(vs, initialVS) }
+            .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialVS)
     }
 

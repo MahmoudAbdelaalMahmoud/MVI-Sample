@@ -12,14 +12,10 @@ class Repository @Inject constructor(
     private val mapper: DtoToModelMapper,
 ) : IRepository {
     override suspend fun getRecipeList(page: Int): RecipeListPartialState {
-//       return try {
            return  with(dataSource.getRecipeList(page)) {
                 if (page == FIRST_PAGE) firstPageResult()
                 else otherPageResult()
             }
-//        }catch (e:Exception){
-//            getErrorAccordingPage(page == FIRST_PAGE,e)
-//        }
     }
 
 

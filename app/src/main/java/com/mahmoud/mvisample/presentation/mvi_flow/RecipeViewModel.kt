@@ -18,9 +18,6 @@ class RecipeViewModel @Inject constructor(
     private val getRecipeListUseCase: GetRecipeListUseCase,
 ) : BaseVM<RecipeListActions, ViewState, RecipeListPartialState>() {
 
-    init {
-        initialProcess()
-    }
 
     override fun initialViewState(): ViewState = ViewState()
 

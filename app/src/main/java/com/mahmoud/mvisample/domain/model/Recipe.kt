@@ -4,5 +4,5 @@ data class Recipe(
     val pk :Int,
     val image: String?,
     val name: String?,
-    val rating: String,
+    val rating: String
 )
