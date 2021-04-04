@@ -9,7 +9,7 @@ import com.mahmoud.mvisample.presentation.ui.adapter.RecipeAdapter
 
 @BindingAdapter("viewState", requireAll = false)
 fun RecyclerView.setRecipesState(oldState: ViewState?, viewState: ViewState?) {
-    if (oldState == viewState) return
+//    if (oldState == viewState) return
     viewState?.let {
         handleAdapterStates(it)
     }
@@ -17,18 +17,20 @@ fun RecyclerView.setRecipesState(oldState: ViewState?, viewState: ViewState?) {
 
 
 private fun RecyclerView.handleAdapterStates(viewState: ViewState) {
+    if (viewState.list.isNotEmpty())
+        setRecipesToAdapter(viewState)
     when {
         viewState.errorLoadMore != null -> {
+
             (adapter as RecipeAdapter).status = ItemListStatus.Error
         }
         viewState.loadingLoadMore -> {
+
             (adapter as RecipeAdapter).status = ItemListStatus.Loading
         }
-        else -> {
-            if (viewState.list.isNotEmpty())
-                setRecipesToAdapter(viewState)
-        }
+
     }
+
 }
 
 

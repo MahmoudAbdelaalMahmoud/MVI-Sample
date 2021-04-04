@@ -4,6 +4,7 @@ import com.mahmoud.mvisample.domain.mvi.MVIAction
 import com.mahmoud.mvisample.domain.mvi.MVIPartialState
 import com.mahmoud.mvisample.domain.mvi.MVIViewState
 import androidx.lifecycle.ViewModel
+import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import io.reactivex.rxjava3.annotations.CheckReturnValue
 import io.reactivex.rxjava3.annotations.SchedulerSupport
 import io.reactivex.rxjava3.core.Observable
@@ -11,19 +12,21 @@ import io.reactivex.rxjava3.core.ObservableTransformer
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.subjects.PublishSubject
+import kotlinx.coroutines.flow.merge
 
 
 abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> : ViewModel() {
 
     val partialStatPublisher: PublishSubject<R> = PublishSubject.create()
 
-    private val intentsSubject: PublishSubject<A> = PublishSubject.create()
+    internal val intentsSubject: PublishSubject<A> = PublishSubject.create()
     private val statesObservable: Observable<S> by lazy { compose() }
     private val disposables by lazy { CompositeDisposable() }
 
     abstract val initialState: S
     abstract fun reduce(result: R, previousState: S): S
     abstract fun handle(action: Observable<A>): List<Observable<out R>>
+
 
 
     fun processIntents(intents: Observable<A>) {
@@ -34,8 +37,7 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
     private val actionProcessor by lazy {
         ObservableTransformer<A, R> { actions ->
             actions.publish { shared ->
-                Observable.merge(
-                    handle(shared))
+                Observable.merge(handle(shared))
             }
         }
     }

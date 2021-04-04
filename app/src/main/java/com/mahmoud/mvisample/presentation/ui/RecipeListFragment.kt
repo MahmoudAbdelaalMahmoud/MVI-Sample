@@ -38,7 +38,6 @@ class RecipeListFragment : Fragment(), IActionHandler {
     ): View {
         with(RecipeListFragmentView.inflate(layoutInflater, container, false)) {
             binding = this
-            viewState = recipeViewModel.initialState
             lifecycleOwner = viewLifecycleOwner
             actionHandler = this@RecipeListFragment
             adapter = RecipeAdapter(this@RecipeListFragment)

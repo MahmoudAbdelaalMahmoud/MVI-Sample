@@ -19,6 +19,7 @@ class RecipeViewModel @Inject constructor(
     private val getRecipeListUseCase: GetRecipeListUseCase,
 ) : BaseVM<RecipeListActions, ViewState, RecipeListPartialState>() {
 
+
     override val initialState by lazy { ViewState() }
 
     override fun reduce(result: RecipeListPartialState, previousState: ViewState): ViewState {
@@ -51,6 +52,7 @@ class RecipeViewModel @Inject constructor(
     override fun handle(acrion: Observable<RecipeListActions>): List<Observable<out RecipeListPartialState>> =
         listOf(
             acrion.ofType(RecipeListActions.Initial::class.java)
+                .take(1)
                 .compose(initial),
             acrion.ofType(RecipeListActions.LoadMore::class.java)
                 .compose(loadMore),
