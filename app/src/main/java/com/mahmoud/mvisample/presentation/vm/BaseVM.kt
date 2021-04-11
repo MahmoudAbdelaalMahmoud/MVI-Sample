@@ -4,7 +4,6 @@ import com.mahmoud.mvisample.domain.mvi.MVIAction
 import com.mahmoud.mvisample.domain.mvi.MVIPartialState
 import com.mahmoud.mvisample.domain.mvi.MVIViewState
 import androidx.lifecycle.ViewModel
-import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import io.reactivex.rxjava3.annotations.CheckReturnValue
 import io.reactivex.rxjava3.annotations.SchedulerSupport
 import io.reactivex.rxjava3.core.Observable
@@ -12,7 +11,6 @@ import io.reactivex.rxjava3.core.ObservableTransformer
 import io.reactivex.rxjava3.disposables.CompositeDisposable
 import io.reactivex.rxjava3.functions.BiFunction
 import io.reactivex.rxjava3.subjects.PublishSubject
-import kotlinx.coroutines.flow.merge
 
 
 abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> : ViewModel() {
@@ -28,9 +26,15 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
     abstract fun handle(action: Observable<A>): List<Observable<out R>>
 
 
-
     fun processIntents(intents: Observable<A>) {
         disposables.add(intents.subscribe(intentsSubject::onNext))
+    }
+
+    fun canEmitInPartialState(result: R): Boolean {
+        return false
+    }
+    fun stopReducingForTypes(result:R):Boolean{
+        return false
     }
 
     fun states(): Observable<S> = statesObservable
@@ -53,6 +57,7 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
         return intentsSubject
             .compose(actionProcessor)
             .emitPartialState()
+            .filter { !stopReducingForTypes(it) }
             // Cache each state and pass it to the reducer to create a new state from
             // the previous cached one and the latest Result emitted from the action processor.
             // The Scan operator is used here for the caching.
@@ -78,7 +83,8 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
 
     private fun Observable<R>.emitPartialState(): Observable<R> {
         return this.map {
-            partialStatPublisher.onNext(it)
+            if (canEmitInPartialState(it))
+                partialStatPublisher.onNext(it)
             it
         }
     }
