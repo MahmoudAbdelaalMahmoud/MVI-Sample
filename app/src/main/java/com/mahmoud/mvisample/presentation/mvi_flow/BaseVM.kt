@@ -17,7 +17,8 @@ abstract class BaseVM<ACTION : MVIAction, VIEW_STATE : MVIViewState, PARTIAL_STA
 
     protected abstract fun initialViewState(): VIEW_STATE
     protected abstract fun toPartialState(flow: Flow<ACTION>): Flow<PARTIAL_STATE>
-    protected abstract fun canEmitForPartialStateForTypes(partialState: PARTIAL_STATE): Boolean
+    protected abstract fun canEmitPartialStateForTypes(partialState: PARTIAL_STATE): Boolean
+    abstract fun stopReducePartialStateForTypes(partialState: PARTIAL_STATE): Boolean
 
 
     suspend fun processIntent(intent: ACTION) = _intentFlow.emit(intent)
@@ -25,13 +26,14 @@ abstract class BaseVM<ACTION : MVIAction, VIEW_STATE : MVIViewState, PARTIAL_STA
     init {
         initialProcess()
     }
+
     private fun initialProcess() {
         val initialVS = initialViewState()
         viewState = _intentFlow
             .shareIn(viewModelScope, SharingStarted.WhileSubscribed())
             .toPartialStatFlow()
             .sendPartialEvent()
-            .filter { it !is RecipeListPartialState.Error.ErrorLoadMore  }
+            .filter { !stopReducePartialStateForTypes(it) }
             .scan(initialVS) { vs, partial -> partial.reduce(vs, initialVS) }
             .distinctUntilChanged()
             .stateIn(viewModelScope, SharingStarted.Eagerly, initialVS)
@@ -45,7 +47,7 @@ abstract class BaseVM<ACTION : MVIAction, VIEW_STATE : MVIViewState, PARTIAL_STA
 
     private fun Flow<PARTIAL_STATE>.sendPartialEvent(): Flow<PARTIAL_STATE> {
         return onEach {
-            if (canEmitForPartialStateForTypes(it)) {
+            if (canEmitPartialStateForTypes(it)) {
                 _partialState.emit(it)
             } else {
                 return@onEach

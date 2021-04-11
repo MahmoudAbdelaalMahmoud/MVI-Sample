@@ -25,6 +25,7 @@ class RecipeViewModel @Inject constructor(
         with(flow) {
             return merge(
                 filterIsInstance<RecipeListActions.Initial>()
+                    .take(1)
                     .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
                 filterIsInstance<RecipeListActions.Refresh>()
                     .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
@@ -34,11 +35,15 @@ class RecipeViewModel @Inject constructor(
         }
     }
 
-    override fun canEmitForPartialStateForTypes(partialState: RecipeListPartialState): Boolean =
+    override fun canEmitPartialStateForTypes(partialState: RecipeListPartialState): Boolean =
         partialState is RecipeListPartialState.Error.ErrorInitial
 
     fun isLoadMoreDisabled(): Boolean {
         return viewState.value.isLoadMoreDisabled()
+    }
+
+    override fun stopReducePartialStateForTypes(partialState: RecipeListPartialState): Boolean {
+        return false
     }
 
 

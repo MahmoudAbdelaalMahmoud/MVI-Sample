@@ -37,10 +37,10 @@ class RecipeListFragment : Fragment(), IActionHandler {
     ): View {
         with(RecipeListFragmentView.inflate(layoutInflater, container, false)) {
             binding = this
+            binding.rvRecipesList.adapter = RecipeAdapter(this@RecipeListFragment)
             viewModel = recipeViewModel
             lifecycleOwner = viewLifecycleOwner
             actionHandler = this@RecipeListFragment
-            adapter = RecipeAdapter(this@RecipeListFragment)
             return root
         }
 
@@ -61,8 +61,8 @@ class RecipeListFragment : Fragment(), IActionHandler {
         }
         paginator = RecyclerPaginator(binding.rvRecipesList,
             { recipeViewModel.isLoadMoreDisabled() },
-            { page ->
-                loadMoreChannel.safeOffer(page)
+            { _ ->
+                loadMoreChannel.safeOffer(recipeViewModel.viewState.value.currentPage)
             })
 
     }
@@ -78,6 +78,6 @@ class RecipeListFragment : Fragment(), IActionHandler {
     }
 
     override fun retry() {
-        loadMoreChannel.safeOffer(paginator.currentPage)
+        loadMoreChannel.safeOffer(recipeViewModel.viewState.value.currentPage)
     }
 }

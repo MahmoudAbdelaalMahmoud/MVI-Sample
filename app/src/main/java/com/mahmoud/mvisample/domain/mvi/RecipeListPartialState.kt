@@ -7,13 +7,13 @@ sealed class RecipeListPartialState :MVIPartialState<ViewState>{
     sealed class ListResult:RecipeListPartialState() {
         class ListResultInitial(private val recipeList: List<Recipe>, isLast: Boolean) : RecipeListPartialState() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(list = recipeList)
+                return initialVs.copy(list = recipeList,currentPage = oldVs.currentPage + 1)
 
             }
         }
         class ListResultLoadMore(private val recipeList: List<Recipe>, isLast: Boolean) : RecipeListPartialState() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(list = oldVs.list + recipeList)
+                return initialVs.copy(list = oldVs.list + recipeList,currentPage = oldVs.currentPage + 1)
 
             }
         }
@@ -35,7 +35,7 @@ sealed class RecipeListPartialState :MVIPartialState<ViewState>{
 
         object LoadMoreLoading : Loading() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(loadingLoadMore = true, list = oldVs.list)
+                return initialVs.copy(loadingLoadMore = true, list = oldVs.list,currentPage = oldVs.currentPage)
             }
         }
     }
@@ -49,7 +49,7 @@ sealed class RecipeListPartialState :MVIPartialState<ViewState>{
 
         class ErrorLoadMore(private val throwable: Throwable) : Error() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(errorLoadMore = throwable, list = oldVs.list)
+                return initialVs.copy(errorLoadMore = throwable, list = oldVs.list,currentPage = oldVs.currentPage)
             }
         }
     }
