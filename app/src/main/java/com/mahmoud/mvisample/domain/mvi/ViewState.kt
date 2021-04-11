@@ -1,5 +1,6 @@
 package com.mahmoud.mvisample.domain.mvi
 
+import com.mahmoud.mvisample.domain.Constants.FIRST_PAGE
 import com.mahmoud.mvisample.domain.model.Recipe
 
 data class ViewState(
@@ -9,6 +10,7 @@ data class ViewState(
     val errorLoadMore: Throwable? = null,
     val loadingLoadMore: Boolean = false,
     val empty: Boolean = false,
+    val currentPage: Int = FIRST_PAGE,
     val isLast: Boolean = false,
 ) : MVIViewState {
     fun isLoadMoreDisabled(): Boolean {

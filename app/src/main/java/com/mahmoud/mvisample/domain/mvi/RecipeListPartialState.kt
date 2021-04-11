@@ -2,18 +2,23 @@ package com.mahmoud.mvisample.domain.mvi
 
 import com.mahmoud.mvisample.domain.model.Recipe
 
-sealed class RecipeListPartialState :MVIPartialState<ViewState>{
+sealed class RecipeListPartialState : MVIPartialState<ViewState> {
     abstract override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState
-    sealed class ListResult:RecipeListPartialState() {
-        class ListResultInitial(private val recipeList: List<Recipe>, isLast: Boolean) : RecipeListPartialState() {
+
+    sealed class ListResult : RecipeListPartialState() {
+        class ListResultInitial(private val recipeList: List<Recipe>,val isLast: Boolean) :
+            RecipeListPartialState() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(list = recipeList)
+                return initialVs.copy(list = recipeList, currentPage = oldVs.currentPage + 1,isLast = isLast)
 
             }
         }
-        class ListResultLoadMore(private val recipeList: List<Recipe>, isLast: Boolean) : RecipeListPartialState() {
+
+        class ListResultLoadMore(private val recipeList: List<Recipe>, val isLast: Boolean) :
+            RecipeListPartialState() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(list = oldVs.list + recipeList)
+                return initialVs.copy(list = oldVs.list + recipeList,
+                    currentPage = oldVs.currentPage + 1, isLast = isLast)
 
             }
         }
@@ -35,7 +40,9 @@ sealed class RecipeListPartialState :MVIPartialState<ViewState>{
 
         object LoadMoreLoading : Loading() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(loadingLoadMore = true, list = oldVs.list)
+                return initialVs.copy(loadingLoadMore = true,
+                    list = oldVs.list,
+                    currentPage = oldVs.currentPage)
             }
         }
     }
@@ -49,7 +56,9 @@ sealed class RecipeListPartialState :MVIPartialState<ViewState>{
 
         class ErrorLoadMore(private val throwable: Throwable) : Error() {
             override fun reduce(oldVs: ViewState, initialVs: ViewState): ViewState {
-                return initialVs.copy(errorLoadMore = throwable, list = oldVs.list)
+                return initialVs.copy(errorLoadMore = throwable,
+                    list = oldVs.list,
+                    currentPage = oldVs.currentPage)
             }
         }
     }

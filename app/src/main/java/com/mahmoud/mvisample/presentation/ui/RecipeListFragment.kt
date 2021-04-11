@@ -23,6 +23,7 @@ import io.reactivex.rxjava3.subjects.PublishSubject
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 
+
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipeListFragment : Fragment(), IActionHandler {
@@ -63,8 +64,8 @@ class RecipeListFragment : Fragment(), IActionHandler {
             override fun supportsPredictiveItemAnimations(): Boolean = false
         }
         paginator = RecyclerPaginator(binding.rvRecipesList,
-            loadMore = { page ->
-                loadMorePublisher.onNext(page)
+            loadMore = { _ ->
+                loadMorePublisher.onNext(binding.viewState?.currentPage)
             })
 
     }
@@ -88,6 +89,6 @@ class RecipeListFragment : Fragment(), IActionHandler {
     }
 
     override fun retry() {
-        loadMorePublisher.onNext(paginator.currentPage)
+        loadMorePublisher.onNext(binding.viewState?.currentPage)
     }
 }

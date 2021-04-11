@@ -9,7 +9,7 @@ import com.mahmoud.mvisample.presentation.ui.adapter.RecipeAdapter
 
 @BindingAdapter("viewState", requireAll = false)
 fun RecyclerView.setRecipesState(oldState: ViewState?, viewState: ViewState?) {
-//    if (oldState == viewState) return
+    if (oldState == viewState) return
     viewState?.let {
         handleAdapterStates(it)
     }

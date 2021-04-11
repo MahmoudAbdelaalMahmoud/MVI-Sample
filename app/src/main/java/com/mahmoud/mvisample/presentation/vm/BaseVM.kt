@@ -34,6 +34,7 @@ abstract class BaseVM<A : MVIAction, S : MVIViewState, R : MVIPartialState<S>> :
     }
 
     fun states(): Observable<S> = statesObservable
+
     private val actionProcessor by lazy {
         ObservableTransformer<A, R> { actions ->
             actions.publish { shared ->
