@@ -4,5 +4,5 @@ import com.mahmoud.mvisample.data.remote.RecipeDto
 
 interface IDataSource {
     suspend fun getRecipeBy(id: Int): RecipeDto
-    suspend fun getRecipeList(page: Int): List<RecipeDto>
+    suspend fun getRecipeList(page: Int, query: String = ""): List<RecipeDto>
 }

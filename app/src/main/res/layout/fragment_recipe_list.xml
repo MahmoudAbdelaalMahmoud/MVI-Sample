@@ -8,7 +8,9 @@
         <variable
             name="viewModel"
             type="com.mahmoud.mvisample.presentation.mvi_flow.RecipeViewModel" />
-
+        <variable
+            name="vs"
+            type="com.mahmoud.mvisample.presentation.ui.adapter.ViewState" />
         <variable
             name="actionHandler"
             type="com.mahmoud.mvisample.presentation.ui.adapter.IActionHandler" />
@@ -32,13 +34,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:viewState="@{viewModel.viewState}"
-                android:visibility="@{viewModel.viewState.loading == false &amp;&amp; viewModel.viewState.error == null}"
+                android:visibility="@{vs.loading == false &amp;&amp; vs.error == null}"
                 tools:listitem="@layout/recipe_item_layout" />
 
             <ProgressBar
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:visibility="@{viewModel.viewState.loading}"
+                android:visibility="@{vs.loading}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -48,8 +50,8 @@
                 android:id="@+id/errorView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@{viewModel.viewState.error.message}"
-                android:visibility="@{viewModel.viewState.error}"
+                android:text="@{vs.error.message}"
+                android:visibility="@{vs.error}"
                 android:onClick="@{()-> actionHandler.retry()}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

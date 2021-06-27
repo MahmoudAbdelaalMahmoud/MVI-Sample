@@ -1,7 +1,6 @@
 package com.mahmoud.mvisample.presentation.mvi_flow
 
 import androidx.lifecycle.SavedStateHandle
-import com.mahmoud.mvisample.domain.Constants.FIRST_PAGE
 import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import com.mahmoud.mvisample.domain.mvi.RecipeListPartialState
 import com.mahmoud.mvisample.domain.mvi.ViewState
@@ -24,23 +23,17 @@ class RecipeViewModel @Inject constructor(
     override fun toPartialState(flow: Flow<RecipeListActions>): Flow<RecipeListPartialState> {
         with(flow) {
             return merge(
-                filterIsInstance<RecipeListActions.Initial>()
-                    .take(1)
-                    .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
-                filterIsInstance<RecipeListActions.Refresh>()
-                    .flatMapLatest { getRecipeListUseCase(FIRST_PAGE) },
-                filterIsInstance<RecipeListActions.LoadMore>()
-                    .flatMapLatest { getRecipeListUseCase(it.page) }
+                flatMapLatest {
+                    getRecipeListUseCase().map { RecipeListPartialState.ListResult(it) }
+                }
             )
         }
     }
 
     override fun canEmitPartialStateForTypes(partialState: RecipeListPartialState): Boolean =
-        partialState is RecipeListPartialState.Error.ErrorInitial
+        false
 
-    fun isLoadMoreDisabled(): Boolean {
-        return viewState.value.isLoadMoreDisabled()
-    }
+
 
     override fun stopReducePartialStateForTypes(partialState: RecipeListPartialState): Boolean {
         return false

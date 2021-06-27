@@ -44,8 +44,15 @@ android {
 dependencies {
     implementation(fileTree(mapOf("dir" to "libs", "include" to listOf("*.jar"))))
     implementation(AppDependencies.appLibraries)
-    implementation("androidx.navigation:navigation-fragment-ktx:2.3.4")
-    implementation("androidx.navigation:navigation-ui-ktx:2.3.4")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.3.5")
+    implementation("androidx.navigation:navigation-ui-ktx:2.3.5")
+    val pagingVersion = "3.0.0"
+
+    implementation("androidx.paging:paging-runtime:$pagingVersion")
+
+    // alternatively - without Android dependencies for tests
+    testImplementation("androidx.paging:paging-common:$pagingVersion")
+
     kapt(arrayListOf<String>().apply {
         add(AppDependencies.DI.hiltCompiler)
         add(AppDependencies.Glide.glideCompiler)

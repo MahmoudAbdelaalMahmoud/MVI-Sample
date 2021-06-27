@@ -14,22 +14,19 @@ import com.mahmoud.mvisample.domain.mvi.RecipeListActions
 import com.mahmoud.mvisample.presentation.mvi_flow.RecipeViewModel
 import com.mahmoud.mvisample.presentation.ui.adapter.IActionHandler
 import com.mahmoud.mvisample.presentation.ui.adapter.RecipeAdapter
+import com.mahmoud.mvisample.presentation.ui.adapter.RecipeStateAdapter
+import com.mahmoud.mvisample.presentation.ui.adapter.toViewState
 import com.mahmoud.mvisample.util.*
-import com.mahmoud.mvisample.util.safeOffer
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 
 @ExperimentalCoroutinesApi
 @AndroidEntryPoint
 class RecipeListFragment : Fragment(), IActionHandler {
-    private lateinit var paginator: RecyclerPaginator
     lateinit var binding: RecipeListFragmentView
     private val recipeViewModel: RecipeViewModel by viewModels()
-
-    private val loadMoreChannel = Channel<Int>(Channel.BUFFERED)
-
+    private val adapter = RecipeAdapter(this@RecipeListFragment)
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -37,7 +34,11 @@ class RecipeListFragment : Fragment(), IActionHandler {
     ): View {
         with(RecipeListFragmentView.inflate(layoutInflater, container, false)) {
             binding = this
-            binding.rvRecipesList.adapter = RecipeAdapter(this@RecipeListFragment)
+            binding.rvRecipesList.adapter =
+                adapter.withLoadStateHeaderAndFooter(
+                    header = RecipeStateAdapter(this@RecipeListFragment),
+                    footer = RecipeStateAdapter(this@RecipeListFragment)
+                )
             viewModel = recipeViewModel
             lifecycleOwner = viewLifecycleOwner
             actionHandler = this@RecipeListFragment
@@ -49,9 +50,16 @@ class RecipeListFragment : Fragment(), IActionHandler {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         // observe single event
         recipeViewModel.partialState
-            .onEach { Logger.d("partial")}
+            .onEach { Logger.d("partial") }
             .launchIn(lifecycleScope)
 
+        binding.swipeRefreshLayout.setOnRefreshListener {
+            binding.swipeRefreshLayout.isRefreshing = false
+            adapter.refresh()
+        }
+        adapter.addLoadStateListener { loadState ->
+            binding.vs = loadState.toViewState(adapter.itemCount)
+        }
         intents()
             .onEach { recipeViewModel.processIntent(it) }
             .launchIn(lifecycleScope)
@@ -59,18 +67,12 @@ class RecipeListFragment : Fragment(), IActionHandler {
         binding.rvRecipesList.layoutManager = object : LinearLayoutManager(requireContext()) {
             override fun supportsPredictiveItemAnimations(): Boolean = false
         }
-        paginator = RecyclerPaginator(binding.rvRecipesList,
-            { recipeViewModel.isLoadMoreDisabled() },
-            { _ ->
-                loadMoreChannel.safeOffer(recipeViewModel.viewState.value.currentPage)
-            })
+
 
     }
 
     private fun intents() = merge(
-        flowOf(RecipeListActions.Initial),
-        binding.swipeRefreshLayout.refreshes().map { RecipeListActions.Refresh },
-        loadMoreChannel.consumeAsFlow().map { RecipeListActions.LoadMore(it) }
+        flowOf(RecipeListActions.Initial)
     )
 
     override fun openRecipe(item: Recipe) {
@@ -78,6 +80,6 @@ class RecipeListFragment : Fragment(), IActionHandler {
     }
 
     override fun retry() {
-        loadMoreChannel.safeOffer(recipeViewModel.viewState.value.currentPage)
+        adapter.retry()
     }
 }
